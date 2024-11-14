@@ -1,9 +1,22 @@
 import '../Styles/card.css';
 import comparepic from '../assets/compare.209x256.png';
 import heartOutline from '../assets/heartoutline2.png';
+import heartFilled from '../assets/heartFilled.png';
+import { useEffect,useState,useContext } from 'react';
+import { ApparelContext } from '../Context/ApparelContext';
 
 function Card(props){
+    const {loadChange, setLoadChange} = useContext(ApparelContext);
 
+    //0 for unfiled anmd 1 for filled
+    const [heartState, setHeartState] = useState(0);
+
+    useEffect(() => {
+        const storedApparels = JSON.parse(localStorage.getItem("Wishlist")) || [];
+        const isFavorited = storedApparels.some(apparel => apparel.title === props.title);
+        setHeartState(isFavorited ? 1 : 0);
+        console.log(heartState);
+    }, [props.title,loadChange]);
 
 
 const handleAddWishList = () => {
@@ -20,6 +33,7 @@ const handleAddWishList = () => {
             goatLink: props.goatLink,
             description: props.description
         };
+        setLoadChange(loadChange+1);
 
         const existingWishlist = JSON.parse(localStorage.getItem("Wishlist")) || [];
         let shoeInWishlist = false;
@@ -36,6 +50,7 @@ const handleAddWishList = () => {
 
         if(!shoeInWishlist){
             existingWishlist.push(shoe);
+            setHeartState(1);
             
         }
 
@@ -104,7 +119,7 @@ const handleAddWishList = () => {
 
             </button>
             <button className='wish' onClick={handleAddWishList}>
-            <img src={heartOutline} className='image' alt="Add to Comparelist" />
+            <img src={heartState ===  1? heartFilled: heartOutline} className='image' alt="Add to Comparelist" />
 
 
             </button>
